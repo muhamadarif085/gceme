@@ -30,8 +30,8 @@ spec:
     command:
     - cat
     tty: true
-  - name: gcloud
-    image: gcr.io/cloud-builders/gcloud
+  - name: docker
+    image: docker
     command:
     - cat
     tty: true
