@@ -44,23 +44,25 @@ spec:
 }
   }
   stages {
-    // stage('Test') {
-    //   steps {
-    //     container('golang') {
-    //       sh """
-    //         ln -s `pwd` /go/src/sample-app
-    //         cd /go/src/sample-app
-    //         go test
-    //       """
-    //     }
-    //   }
-    // }
-    stage('Build and push image with docker') {
+    stage('Test') {
+      steps {
+        container('golang') {
+          sh """
+            ln -s `pwd` /go/src/sample-app
+            cd /go/src/sample-app
+            go test
+          """
+        }
+      }
+    }
+    stage('Build image with docker') {
       steps {
         container('docker') {
           sh "PYTHONUNBUFFERED=1 docker build -t ${IMAGE_TAG} ."
         }
       }
+    }
+    stage('Push image with docker') {
       steps {
         container('docker') {
           sh "PYTHONUNBUFFERED=1 docker push ${IMAGE_TAG}"
