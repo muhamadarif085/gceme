@@ -84,6 +84,13 @@ spec:
         }
       }
     }
+    stage('detect image') {
+      steps {
+        container('docker'){
+          sh "docker images"
+        }
+      }
+    }
     // stage('Deploy Canary') {
     //   // Canary branch
     //   when { branch 'canary' }
@@ -134,8 +141,9 @@ spec:
   post{
     always{
       container('docker'){
+        sh "docker system prune -f --all"
         sh "docker logout"
-      }  
+      }
     }
   }
 }
