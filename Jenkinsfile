@@ -133,7 +133,9 @@ spec:
   }
   post{
     always{
-      sh "docker logout"
-    }  
+      container('docker'){
+        sh "docker logout"
+      }  
+    }
   }
 }
