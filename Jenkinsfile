@@ -5,7 +5,7 @@ pipeline {
     APP_NAME = "gceme"
     DOCKER_REPO = "arifpradana22"
     FE_SVC_NAME = "${APP_NAME}-frontend"
-    CLUSTER = "jenkins-cd"
+    CLUSTER = "jenkins-cluster"
     CLUSTER_ZONE = "us-central1-c"
     IMAGE_TAG = "docker.io/${DOCKER_REPO}/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
     JENKINS_CRED = "${PROJECT}"
@@ -45,6 +45,11 @@ spec:
       path: /var/run/docker.sock
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
+    command:
+    - cat
+    tty: true
+  - name: gcloud
+    image: gcr.io/cloud-builders/gcloud
     command:
     - cat
     tty: true
@@ -95,6 +100,9 @@ spec:
       // Canary branch
       when { branch 'test' }
       steps {
+        echo "Deployment started ..."
+		    sh "ls -ltr"
+		    sh "pwd"
         sh "sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml"
         step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
         echo "Deployment Finished..."
