@@ -64,7 +64,7 @@ spec:
       }
     }
     stage('Login on Dockerhub') {
-      step {
+      steps {
         sh 'echo $DOCKERHUB_CRED_PSW | docker login -u $DOCKERHUB_CRED_USR --password-stdin'
       }
     }
