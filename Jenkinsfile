@@ -9,7 +9,7 @@ pipeline {
     CLUSTER_ZONE = "us-central1-c"
     IMAGE_TAG = "docker.io/${DOCKER_REPO}/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
     JENKINS_CRED = "${PROJECT}"
-    DOCKERHUB_CRED = credentials('f6f1a119-a1b7-41ea-8925-a8421861b920')
+    DOCKERHUB_CRED = credentials('dockerhub')
   }
 
   agent {
