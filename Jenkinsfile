@@ -97,7 +97,7 @@ spec:
       steps {
         sh "sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml"
         
-        withKubeConfig([credentialsId: 'practice-357012', serverUrl: 'https://kubernetes.default']){
+        withKubeConfig([credentialsId: 'practice-357012', serverUrl: 'https://34.72.183.84']){
           sh "kubectl apply -f ./k8s/services/*.yaml"
         }
         // container('kubectl') {
