@@ -31,10 +31,18 @@ spec:
     command:
     - cat
     tty: true
-  - name: gcloud
-    image: gcr.io/cloud-builders/gcloud
+  - name: docker
+    image: docker:latest
     command:
     - cat
+    tty: true
+    volumeMounts:
+     - mountPath: /var/run/docker.sock
+       name: docker-sock
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
     command:
@@ -56,19 +64,25 @@ spec:
     //   }
     // }
     stage('Build image with docker') {
+      container('docker') {  
       steps {
         sh "docker build -t ${IMAGE_TAG} ."
       }
+      }
     }
     stage('Login on Dockerhub') {
+      container('docker'){
       steps {
         sh 'echo $DOCKERHUB_CRED_PSW | docker login -u $DOCKERHUB_CRED_USR --password-stdin'
       }
+      }
     }
     stage('Push image with docker') {
-      steps {
+      container('docker') {
+        steps {
         sh "docker push ${IMAGE_TAG}"
       }
+    }
     }
     stage('Deploy Canary') {
       // Canary branch
