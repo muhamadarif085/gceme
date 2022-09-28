@@ -37,8 +37,8 @@ spec:
     - cat
     tty: true
     volumeMounts:
-     - mountPath: /var/run/docker.sock
-       name: docker-sock
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
   volumes:
   - name: docker-sock
     hostPath:
@@ -64,25 +64,25 @@ spec:
     //   }
     // }
     stage('Build image with docker') {
-      container('docker') {  
       steps {
+        container('docker'){
         sh "docker build -t ${IMAGE_TAG} ."
-      }
+        }
       }
     }
     stage('Login on Dockerhub') {
-      container('docker'){
       steps {
+        container('docker'){
         sh 'echo $DOCKERHUB_CRED_PSW | docker login -u $DOCKERHUB_CRED_USR --password-stdin'
-      }
+        }
       }
     }
     stage('Push image with docker') {
-      container('docker') {
-        steps {
+      steps {
+        container('docker'){
         sh "docker push ${IMAGE_TAG}"
+        }
       }
-    }
     }
     stage('Deploy Canary') {
       // Canary branch
