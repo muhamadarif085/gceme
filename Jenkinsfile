@@ -1,5 +1,5 @@
 pipeline {
-
+  
   environment {
     PROJECT = "practice-357012"
     APP_NAME = "gceme"
@@ -9,6 +9,7 @@ pipeline {
     CLUSTER_ZONE = "us-central1-c"
     IMAGE_TAG = "docker.io/${DOCKER_REPO}/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
     JENKINS_CRED = "${PROJECT}"
+    DOCKERHUB_CRED = credentials('f6f1a119-a1b7-41ea-8925-a8421861b920')
   }
 
   agent {
@@ -31,10 +32,17 @@ spec:
     - cat
     tty: true
   - name: docker
-    image: docker
+    image: docker:latest
     command:
     - cat
     tty: true
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
     command:
@@ -44,28 +52,35 @@ spec:
 }
   }
   stages {
-    stage('Test') {
+    // stage('Test') {
+    //   steps {
+    //     container('golang') {
+    //       sh """
+    //         ln -s `pwd` /go/src/sample-app
+    //         cd /go/src/sample-app
+    //         go test
+    //       """
+    //     }
+    //   }
+    // }
+    stage('Build image with docker') {
       steps {
-        container('golang') {
-          sh """
-            ln -s `pwd` /go/src/sample-app
-            cd /go/src/sample-app
-            go test
-          """
+        container('docker'){
+        sh "docker build -t ${IMAGE_TAG} ."
         }
       }
     }
-    stage('Build image with docker') {
+    stage('Login on Dockerhub') {
       steps {
-        container('docker') {
-          sh "PYTHONUNBUFFERED=1 docker build -t ${IMAGE_TAG} ."
+        container('docker'){
+        sh 'echo $DOCKERHUB_CRED_PSW | docker login -u $DOCKERHUB_CRED_USR --password-stdin'
         }
       }
     }
     stage('Push image with docker') {
       steps {
-        container('docker') {
-          sh "PYTHONUNBUFFERED=1 docker push ${IMAGE_TAG}"
+        container('docker'){
+        sh "docker push ${IMAGE_TAG}"
         }
       }
     }
@@ -114,6 +129,13 @@ spec:
           echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${FE_SVC_NAME}:80/"
         }
       }
+    }
+  }
+  post{
+    always{
+      container('docker'){
+        sh "docker logout"
+      }  
     }
   }
 }
