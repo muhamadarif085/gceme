@@ -44,7 +44,7 @@ spec:
     hostPath:
       path: /var/run/docker.sock
   - name: kubectl
-    image: gcr.io/cloud-builders/kubectl
+    image: bitnami/kubectl
     command:
     - cat
     tty: true
