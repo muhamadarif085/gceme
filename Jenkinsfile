@@ -96,8 +96,8 @@ spec:
       when { branch 'test' }
       steps {
         sh "sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml"
-       step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s/canary', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-       echo "Deployment Finished..."
+        step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+        echo "Deployment Finished..."
         // container('kubectl') {
           // Change deployed image in canary to the one we just built
           // sh("sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
