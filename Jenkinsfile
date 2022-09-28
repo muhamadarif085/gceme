@@ -58,9 +58,7 @@ spec:
     // }
     stage('Build image with docker') {
       steps {
-        container('docker') {
-          sh "docker build -t ${IMAGE_TAG} ."
-        }
+        sh "docker build -t ${IMAGE_TAG} ."
       }
     }
     stage('Login on Dockerhub') {
@@ -70,9 +68,7 @@ spec:
     }
     stage('Push image with docker') {
       steps {
-        container('docker') {
-          sh "docker push ${IMAGE_TAG}"
-        }
+        sh "docker push ${IMAGE_TAG}"
       }
     }
     stage('Deploy Canary') {
