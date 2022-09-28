@@ -9,6 +9,7 @@ pipeline {
     CLUSTER_ZONE = "us-central1-c"
     IMAGE_TAG = "docker.io/${DOCKER_REPO}/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
     JENKINS_CRED = "${PROJECT}"
+    DOCKERHUB_CRED = credentials('f6f1a119-a1b7-41ea-8925-a8421861b920')
   }
 
   agent {
@@ -58,14 +59,19 @@ spec:
     stage('Build image with docker') {
       steps {
         container('docker') {
-          sh "PYTHONUNBUFFERED=1 docker build -t ${IMAGE_TAG} ."
+          sh "docker build -t ${IMAGE_TAG} ."
         }
+      }
+    }
+    stage('Login on Dockerhub') {
+      step {
+        sh 'echo $DOCKERHUB_CRED_PSW | docker login -u $DOCKERHUB_CRED_USR --password-stdin'
       }
     }
     stage('Push image with docker') {
       steps {
         container('docker') {
-          sh "PYTHONUNBUFFERED=1 docker push ${IMAGE_TAG}"
+          sh "docker push ${IMAGE_TAG}"
         }
       }
     }
@@ -115,5 +121,8 @@ spec:
         }
       }
     }
+  }
+  post('docker logout'){
+    sh "docker logout"
   }
 }
