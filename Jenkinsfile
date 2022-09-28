@@ -122,7 +122,9 @@ spec:
       }
     }
   }
-  post('docker logout'){
-    sh "docker logout"
+  post{
+    always{
+      sh "docker logout"
+    }  
   }
 }
