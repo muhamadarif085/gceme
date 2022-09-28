@@ -96,10 +96,10 @@ spec:
       when { branch 'test' }
       steps {
         sh "sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml"
+        sh "cat ./k8s/canary/backend-canary.yaml"
+        // sh "kubectl apply -f ./k8s/services/*.yaml"
         
-        withKubeConfig([credentialsId: 'practice-357012', serverUrl: 'https://34.72.183.84']){
-          sh "kubectl apply -f ./k8s/services/*.yaml"
-        }
+
         // container('kubectl') {
           // Change deployed image in canary to the one we just built
           // sh("sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
