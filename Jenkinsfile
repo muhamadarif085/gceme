@@ -93,7 +93,7 @@ spec:
     }
     stage('Deploy Canary') {
       // Canary branch
-      when { branch 'canary' }
+      when { branch 'test' }
       steps {
         container('kubectl') {
           // Change deployed image in canary to the one we just built
