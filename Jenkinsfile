@@ -102,11 +102,10 @@ spec:
       steps {
         echo "Deployment started ..."
 		    // sh "ls -ltr"
-		    // sh "pwd"
+		    sh "pwd"
         sh "sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml"
-        container('kubectl'){
-        step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true]) 
-        }
+        step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER ,manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
+        step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
         echo "Deployment Finished..."
         // container('kubectl') {
           // Change deployed image in canary to the one we just built
