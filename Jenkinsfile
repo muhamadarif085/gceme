@@ -5,7 +5,7 @@ pipeline {
     APP_NAME = "gceme"
     DOCKER_REPO = "arifpradana22"
     FE_SVC_NAME = "${APP_NAME}-frontend"
-    CLUSTER = "jenkins-cluster"
+    CLUSTER = "jenkins-cd"
     CLUSTER_ZONE = "us-central1-c"
     IMAGE_TAG = "docker.io/${DOCKER_REPO}/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
     JENKINS_CRED = "${PROJECT}"
@@ -14,7 +14,7 @@ pipeline {
 
   agent {
     kubernetes {
-      label 'sample-app'
+      inheritFrom 'sample-app'
       defaultContainer 'jnlp'
       yaml """
 apiVersion: v1
