@@ -102,7 +102,11 @@ spec:
       steps {
         echo "Deployment started ..."
 		    // sh "ls -ltr"
-        sh "sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml"
+
+        withKubeConfig([credentialsId: env.JENKINS_CRED, serverUrl: 'https://kubernetes.default']){
+          sh "sed -i.bak 's#docker.io/arifpradana22/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml"
+          sh "kubectl apply -f ./k8s/services/*.yaml"
+        }
         // step([
         //   $class: 'KubernetesEngineBuilder', 
         //   namespace:'production', 
@@ -123,11 +127,6 @@ spec:
     //       step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
           // sh("echo http://`kubectl --namespace=production get service/${FE_SVC_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` > ${FE_SVC_NAME}")
         // }
-      }
-      steps {
-        withKubeConfig([credentialsId: env.JENKINS_CRED, serverUrl: 'https://kubernetes.default']){
-          sh("kubectl apply -f ./k8s/services/*.yaml")
-        }
       }
     }
     // stage('Deploy Production') {
